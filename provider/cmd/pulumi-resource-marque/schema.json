@@ -1,7 +1,7 @@
 {
   "name": "marque",
   "displayName": "Marque",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Pulumi provider for Marque — atproto-native domain registrar and DNS host.",
   "keywords": [
     "marque",

@@ -1,5 +1,5 @@
 PROVIDER      := pulumi-resource-marque
-VERSION       ?= 0.1.0
+VERSION       ?= 0.1.1
 PKG           := marque
 PROVIDER_PATH := provider
 BIN           := bin/$(PROVIDER)

@@ -2,6 +2,7 @@ package marque
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"time"
@@ -12,13 +13,46 @@ import (
 
 type DnsZone struct{}
 
-// Record is one DNS entry inside a zone.
+// Record is one DNS entry inside a zone. Only pulumi tags here — JSON
+// wire format for atproto uses different field names (`recordType`
+// instead of `type`), handled explicitly by the MarshalJSON /
+// UnmarshalJSON methods below. Mixing pulumi + json tags on the same
+// struct confuses pulumi-go-provider's input decoder, which resolves
+// input properties via json tags when present.
 type Record struct {
-	Name     string `pulumi:"name" json:"name"`
-	Type     string `pulumi:"type" json:"recordType"`
-	Value    string `pulumi:"value" json:"value"`
-	TTL      int    `pulumi:"ttl" json:"ttl"`
-	Priority *int   `pulumi:"priority,optional" json:"priority,omitempty"`
+	Name     string `pulumi:"name"`
+	Type     string `pulumi:"type"`
+	Value    string `pulumi:"value"`
+	TTL      int    `pulumi:"ttl"`
+	Priority *int   `pulumi:"priority,optional"`
+}
+
+// wireRecord mirrors the at.marque.dns#entry lexicon exactly.
+type wireRecord struct {
+	Name       string `json:"name"`
+	RecordType string `json:"recordType"`
+	Value      string `json:"value"`
+	TTL        int    `json:"ttl"`
+	Priority   *int   `json:"priority,omitempty"`
+}
+
+func (r Record) MarshalJSON() ([]byte, error) {
+	return json.Marshal(wireRecord{
+		Name: r.Name, RecordType: r.Type, Value: r.Value,
+		TTL: r.TTL, Priority: r.Priority,
+	})
+}
+
+func (r *Record) UnmarshalJSON(data []byte) error {
+	var w wireRecord
+	if err := json.Unmarshal(data, &w); err != nil {
+		return err
+	}
+	*r = Record{
+		Name: w.Name, Type: w.RecordType, Value: w.Value,
+		TTL: w.TTL, Priority: w.Priority,
+	}
+	return nil
 }
 
 type DnsZoneArgs struct {
