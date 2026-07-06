@@ -1,0 +1,237 @@
+{
+  "name": "marque",
+  "displayName": "Marque",
+  "version": "0.1.0",
+  "description": "A Pulumi provider for Marque — atproto-native domain registrar and DNS host.",
+  "keywords": [
+    "marque",
+    "atproto",
+    "dns",
+    "domain",
+    "category/network"
+  ],
+  "homepage": "https://marque.at",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/firstatlast/pulumi-marque",
+  "pluginDownloadURL": "github://api.github.com/firstatlast/pulumi-marque",
+  "publisher": "firstatlast",
+  "namespace": "firstatlast",
+  "language": {
+    "csharp": {
+      "respectSchemaVersion": true
+    },
+    "go": {
+      "generateResourceContainerTypes": true,
+      "importBasePath": "github.com/firstatlast/pulumi-marque/sdk/go/marque",
+      "respectSchemaVersion": true
+    },
+    "nodejs": {
+      "respectSchemaVersion": true
+    },
+    "python": {
+      "pyproject": {
+        "enabled": true
+      },
+      "respectSchemaVersion": true
+    }
+  },
+  "config": {
+    "variables": {
+      "appPassword": {
+        "type": "string",
+        "description": "atproto app password. Generate one in your account's app-passwords settings.",
+        "default": "",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_APP_PASSWORD"
+          ]
+        },
+        "secret": true
+      },
+      "identifier": {
+        "type": "string",
+        "description": "atproto handle or DID whose PDS holds the DNS records.",
+        "default": "",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_IDENTIFIER"
+          ]
+        }
+      },
+      "service": {
+        "type": "string",
+        "description": "atproto service URL used for authentication (default https://bsky.social).",
+        "default": "https://bsky.social",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_SERVICE"
+          ]
+        }
+      }
+    }
+  },
+  "types": {
+    "marque:marque:Record": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Record name relative to the zone apex. Use '@' for the apex itself."
+        },
+        "priority": {
+          "type": "integer",
+          "description": "Priority for MX and SRV records."
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Time-to-live in seconds."
+        },
+        "type": {
+          "type": "string",
+          "description": "DNS record type. One of A, AAAA, CNAME, MX, TXT, SRV, NS, CAA."
+        },
+        "value": {
+          "type": "string",
+          "description": "Record value / rdata."
+        }
+      },
+      "type": "object",
+      "required": [
+        "name",
+        "type",
+        "value",
+        "ttl"
+      ]
+    }
+  },
+  "provider": {
+    "properties": {
+      "appPassword": {
+        "type": "string",
+        "description": "atproto app password. Generate one in your account's app-passwords settings.",
+        "default": "",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_APP_PASSWORD"
+          ]
+        },
+        "secret": true
+      },
+      "identifier": {
+        "type": "string",
+        "description": "atproto handle or DID whose PDS holds the DNS records.",
+        "default": "",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_IDENTIFIER"
+          ]
+        }
+      },
+      "service": {
+        "type": "string",
+        "description": "atproto service URL used for authentication (default https://bsky.social).",
+        "default": "https://bsky.social",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_SERVICE"
+          ]
+        }
+      }
+    },
+    "inputProperties": {
+      "appPassword": {
+        "type": "string",
+        "description": "atproto app password. Generate one in your account's app-passwords settings.",
+        "default": "",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_APP_PASSWORD"
+          ]
+        },
+        "secret": true
+      },
+      "identifier": {
+        "type": "string",
+        "description": "atproto handle or DID whose PDS holds the DNS records.",
+        "default": "",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_IDENTIFIER"
+          ]
+        }
+      },
+      "service": {
+        "type": "string",
+        "description": "atproto service URL used for authentication (default https://bsky.social).",
+        "default": "https://bsky.social",
+        "defaultInfo": {
+          "environment": [
+            "MARQUE_SERVICE"
+          ]
+        }
+      }
+    }
+  },
+  "resources": {
+    "marque:index:DnsZone": {
+      "description": "A Marque DNS zone (at.marque.dns record) — the full DNS record set for a domain.",
+      "properties": {
+        "cid": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Fully qualified domain name this zone belongs to. Must be a domain already registered in the account's at.marque.domain records. Changing this replaces the zone."
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/types/marque:marque:Record"
+          },
+          "description": "Full set of DNS records for the zone. Marque stores the whole zone as one atproto record, so writes are atomic and this list is authoritative — omitted entries are removed."
+        },
+        "repo": {
+          "type": "string"
+        },
+        "subjectCid": {
+          "type": "string"
+        },
+        "subjectUri": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "records",
+        "repo",
+        "uri",
+        "cid",
+        "subjectUri",
+        "subjectCid",
+        "createdAt"
+      ],
+      "inputProperties": {
+        "domain": {
+          "type": "string",
+          "description": "Fully qualified domain name this zone belongs to. Must be a domain already registered in the account's at.marque.domain records. Changing this replaces the zone."
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/types/marque:marque:Record"
+          },
+          "description": "Full set of DNS records for the zone. Marque stores the whole zone as one atproto record, so writes are atomic and this list is authoritative — omitted entries are removed."
+        }
+      },
+      "requiredInputs": [
+        "domain",
+        "records"
+      ]
+    }
+  }
+}
