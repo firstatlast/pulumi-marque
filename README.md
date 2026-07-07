@@ -11,6 +11,7 @@ Marque doesn't publish a bespoke DNS REST API. Instead, DNS zones are stored as 
 ### Resources
 
 - `marque:index:DnsZone` — the full DNS record set for one domain. Marque stores the whole zone as one atproto record, so writes are atomic and the `records` input is authoritative (entries you omit are removed).
+- `marque:index:Domain` — the `at.marque.domain` record for a domain already registered on the account. Adopts the existing registration and manages its mutable fields (nameservers, DNSSEC, auto-renew, WHOIS privacy, linked atproto handle). Registration and de-registration happen in Marque's UI, not through this resource — `create` refuses to invent a record and `delete` is a no-op that detaches management without touching the underlying record.
 
 ### Prerequisites
 
@@ -39,6 +40,14 @@ new marque.DnsZone("example-com", {
         { name: "_atproto", type: "TXT", value: "did=did:plc:...", ttl: 300 },
     ],
 });
+
+new marque.Domain("example-com-domain", {
+    domain: "example.com",
+    nameServers: ["ns1.marque.at", "ns2.marque.at"],
+    dnssec: true,
+    autoRenew: true,
+    whoisPrivacy: "on",
+});
 ```
 
 ## Repository layout
@@ -50,6 +59,7 @@ provider/
     ├── client.go                  # atproto XRPC client (createSession, get/put/delete record)
     ├── config.go                  # provider config
     ├── dnszone.go                 # DnsZone resource
+    ├── domain.go                  # Domain resource
     └── provider.go                # provider registration
 sdk/                                # generated SDKs (make sdk)
 examples/                           # runnable examples
@@ -71,6 +81,7 @@ make test      # run unit tests
 - **rkey convention.** Zone records use the FQDN as the record key, mirroring the sibling `at.marque.domain` collection.
 - **Subject strongRef.** Every zone references its parent `at.marque.domain` record. The provider auto-resolves this on Create/Update by fetching the domain record's current CID, so re-registrations are handled transparently.
 - **Order-insensitive diff.** Reordering entries in code doesn't produce a diff; only true set changes do.
+- **`Domain` is adopt-only.** `Create` requires the `at.marque.domain` record to already exist and refuses to invent one — registration goes through Marque's purchase flow. `Delete` is a no-op that detaches management without touching the underlying record, because that record encodes registry-level ownership rather than provider-created infrastructure.
 
 ## License
 

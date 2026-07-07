@@ -11,7 +11,7 @@ import (
 
 // Version is the provider version. Overridden at build time via
 // -ldflags "-X main.Version=x.y.z".
-var Version = "0.1.1"
+var Version = "0.2.0"
 
 func main() {
 	provider, err := marque.NewProvider()
