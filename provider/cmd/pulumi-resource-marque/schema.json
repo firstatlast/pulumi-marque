@@ -1,7 +1,7 @@
 {
   "name": "marque",
   "displayName": "Marque",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A Pulumi provider for Marque — atproto-native domain registrar and DNS host.",
   "keywords": [
     "marque",
@@ -231,6 +231,100 @@
       "requiredInputs": [
         "domain",
         "records"
+      ]
+    },
+    "marque:index:Domain": {
+      "description": "A Marque domain (at.marque.domain record). Adopts an existing registration and manages its mutable fields — nameservers, DNSSEC, auto-renew, WHOIS privacy, and the linked atproto handle. Does not register or delete domains.",
+      "properties": {
+        "atprotoHandle": {
+          "type": "string",
+          "description": "atproto handle to link to this domain."
+        },
+        "atprotoVerified": {
+          "type": "boolean"
+        },
+        "autoRenew": {
+          "type": "boolean",
+          "description": "Whether the domain auto-renews before expiry."
+        },
+        "cid": {
+          "type": "string"
+        },
+        "dnssec": {
+          "type": "boolean",
+          "description": "Whether DNSSEC is enabled for the domain."
+        },
+        "domain": {
+          "type": "string",
+          "description": "Fully qualified domain name. Must already be registered on the authenticated account at marque.at — this resource adopts the existing record rather than creating one. Changing this replaces the resource."
+        },
+        "expiresAt": {
+          "type": "string"
+        },
+        "nameServers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Authoritative nameservers for the domain (up to 8)."
+        },
+        "registeredAt": {
+          "type": "string"
+        },
+        "repo": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "whoisPrivacy": {
+          "type": "string",
+          "description": "WHOIS privacy setting. One of: on, off, gdpr, registry."
+        }
+      },
+      "required": [
+        "domain",
+        "repo",
+        "uri",
+        "cid",
+        "status",
+        "registeredAt",
+        "expiresAt"
+      ],
+      "inputProperties": {
+        "atprotoHandle": {
+          "type": "string",
+          "description": "atproto handle to link to this domain."
+        },
+        "autoRenew": {
+          "type": "boolean",
+          "description": "Whether the domain auto-renews before expiry."
+        },
+        "dnssec": {
+          "type": "boolean",
+          "description": "Whether DNSSEC is enabled for the domain."
+        },
+        "domain": {
+          "type": "string",
+          "description": "Fully qualified domain name. Must already be registered on the authenticated account at marque.at — this resource adopts the existing record rather than creating one. Changing this replaces the resource."
+        },
+        "nameServers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Authoritative nameservers for the domain (up to 8)."
+        },
+        "whoisPrivacy": {
+          "type": "string",
+          "description": "WHOIS privacy setting. One of: on, off, gdpr, registry."
+        }
+      },
+      "requiredInputs": [
+        "domain"
       ]
     }
   }
